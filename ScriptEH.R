@@ -33,7 +33,7 @@ corte <- sample(nrow(datos),nrow(datos)*porcentaje)
 train<-datos[corte,]
 test<-datos[-corte,]
 
-#Corelacion de las variables
+#Correlacion de las variables
 
 ggpairs(datos[,c('GarageArea','GarageCars','MoSold','GarageYrBlt','MasVnrArea','MiscVal')])
 
@@ -63,8 +63,8 @@ rmse(test$Intermedia,prediccion)
 
 train_numerico<-train[,c('GarageArea','GarageCars','Intermedia','MoSold','GarageYrBlt','MasVnrArea','MiscVal')]
 
-modeloCaret<-train(Intermedia~.,trControl=trainControl('none'),
+modeloIntet<-train(Intermedia~.,trControl=trainControl('none'),
                    train_numerico,
                    method='glm',family='binomial')
 
-varImp(modeloCaret)
+varImp(modeloIntet)

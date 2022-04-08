@@ -1,6 +1,6 @@
 ---
 title: "Informe"
-author: "Marco Ramirez 19588, Alfredo Quezada, Estuardo Hernandez"
+author: "Marco Ramirez 19588, Alfredo Quezada, Estuardo Hernandez 19202"
 date: "7/4/2022"
 output: html_document
 ---
@@ -78,7 +78,7 @@ En este modelo lo que queremos saber es si la casa es cara o no, esto mediante l
 
 ```{r message=FALSE, warning=FALSE}
 
-#Corelacion de las variables
+#Correlacion de las variables
 
 ggpairs(datos[,c('SalePrice','GrLivArea','LotFrontage','LotArea','BsmtQual','PoolArea')])
 
@@ -132,3 +132,71 @@ varImp(modeloCaret)
 Y como se observa anteriormente, se muestran las mejores variables para poder predecir el estado de las casas, evidenciando que **LotFrontage** no es una variable que nos sirva para el modelo, exisitiendo de no usar esta variable, cabe mencionar que por otro lado esta variable anteriormente si tenia una buena correlacion, sin embargo aun asi no fue util para este modelo, tal es el caso contrario de la variable **PoolArea** el cual no tenia una buena correlacion, sin embargo, si influyo mucho en la prediccion del modelo. 
 Y la mejor variable para predicir el estado de la casa es **SalePrice**
 
+
+#### 4.Segundo modelo
+
+```{r warning=FALSE}
+
+#Queremos saber si una casa es cara o no
+
+modelo<-glm(Intermedia~., data = train[,c('GarageArea','GarageCars','Intermedia','MoSold','GarageYrBlt','MasVnrArea','MiscVal')],family = binomial(), maxit=100)
+modelo
+
+```
+Con este modelo se busca determinar si una casa es intermedia o no, utilizando las variables **'GarageArea','GarageCars','Intermedia','MoSold','GarageYrBlt','MasVnrArea','MiscVal'**.
+
+```{r message=FALSE, warning=FALSE}
+
+#Correlacion de las variables
+
+ggpairs(datos[,c('GarageArea','GarageCars','MoSold','GarageYrBlt','MasVnrArea','MiscVal')])
+
+```
+
+En el gráfico anterior se observa que la mayoria de las variables no tienen buena correlación, sobre todo la variable **MiscVal**, sin embargo, las variables **GarageCars** y **GarageYrBlt** sí tienen buena correlación. Entonces se puede concluir que esta combinación de variables no es la más adecuada para el modelo, pero se decidió dejar por fines didácticos.
+
+```{r}
+
+
+##Modelo con todas las variables
+pred<-predict(modelo,newdata = test[,c('GarageArea','GarageCars','MoSold','GarageYrBlt','MasVnrArea','MiscVal')], type = "response")
+prediccion<-ifelse(pred>=0.5,1,0)
+confusionMatrix(as.factor(test$Intermedia),as.factor(prediccion))
+
+```
+
+Este modelo tuvo una precision de **75.63%**, tal y como se observa en la matriz de confusión mostrada anteriormente. Se obtuvieron 107 casas de error, indicando que no fue la mejor prediccion, pero si es significativa basándonos en la precisión. A continuación se observará si tiene overfitting o no. 
+
+```{r}
+
+#Modelo para verificar overfitting
+
+trainPredict<-predict(modelo,newdata = train[,c('GarageArea','GarageCars','MoSold','GarageYrBlt','MasVnrArea','MiscVal')], type = "response")
+trainPred<- ifelse(trainPredict>0.5,1,0)
+confusionMatrix(as.factor(train$Intermedia),as.factor(trainPred))
+
+```
+Modelo para comparar con la predicción.
+```{r}
+#Calculo de rmse para ver si tenemos overfitting, mientras mas cercano a 0 mayor overffiting.
+
+rmse(test$Intermedia,prediccion)
+
+
+
+```
+Se observa que se obtuvo un RMSE alejado de 0, siendo **0.493696**, indicando que este modelo no tiene overfitting.
+
+```{r warning=FALSE}
+train_numerico<-train[,c('GarageArea','GarageCars','Intermedia','MoSold','GarageYrBlt','MasVnrArea','MiscVal')]
+
+modeloIntet<-train(Intermedia~.,trControl=trainControl('none'),
+                   train_numerico,
+                   method='glm',family='binomial')
+
+varImp(modeloIntet)
+
+
+
+```
+Finalmente, se muestran las mejores variables para poder predecir el estado de las casas, evidenciando que **GarageArea** no es una variable útil para el modelo y esto se afirma con su correlación mostrada anteriormente, siendo mala correlación. Respecto a la variable **GarageCars** sí es útil, influyendo en la predicción del modelo, y se observa que esta variable si tiene buena correlación. E indiscutiblemente, la mejor variable de este modelo para predicir el estado de la casa es **GarageYrBlt**.
