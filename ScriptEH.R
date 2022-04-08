@@ -39,7 +39,7 @@ ggpairs(datos[,c('GarageArea','GarageCars','MoSold','GarageYrBlt','MasVnrArea','
 
 #Queremos saber si una casa es cara o no
 
-modelo<-glm(Cara~., data = train[,c('GarageArea','GarageCars','Cara','MoSold','GarageYrBlt','MasVnrArea','MiscVal')],family = binomial(), maxit=100)
+modelo<-glm(Intermedia~., data = train[,c('GarageArea','GarageCars','Intermedia','MoSold','GarageYrBlt','MasVnrArea','MiscVal')],family = binomial(), maxit=100)
 
 #-------------------------------------------------
 # Regresi?n Logistica 
@@ -49,21 +49,21 @@ modelo<-glm(Cara~., data = train[,c('GarageArea','GarageCars','Cara','MoSold','G
 ##Modelo con todas las variables
 pred<-predict(modelo,newdata = test[,c('GarageArea','GarageCars','MoSold','GarageYrBlt','MasVnrArea','MiscVal')], type = "response")
 prediccion<-ifelse(pred>=0.5,1,0)
-confusionMatrix(as.factor(test$Cara),as.factor(prediccion))
+confusionMatrix(as.factor(test$Intermedia),as.factor(prediccion))
 
 #Modelo para verificar overfitting
 
 trainPredict<-predict(modelo,newdata = train[,c('GarageArea','GarageCars','MoSold','GarageYrBlt','MasVnrArea','MiscVal')], type = "response")
 trainPred<- ifelse(trainPredict>0.5,1,0)
-confusionMatrix(as.factor(train$Cara),as.factor(trainPred))
+confusionMatrix(as.factor(train$Intermedia),as.factor(trainPred))
 
 #Calculo de rmse para ver si tenemos overfittin, mientras mas cercano a 0 mayor overffiting.
-rmse(train$Cara,trainPred)
-rmse(test$Cara,prediccion)
+rmse(train$Intermedia,trainPred)
+rmse(test$Intermedia,prediccion)
 
-train_numerico<-train[,c('GarageArea','GarageCars','Cara','MoSold','GarageYrBlt','MasVnrArea','MiscVal')]
+train_numerico<-train[,c('GarageArea','GarageCars','Intermedia','MoSold','GarageYrBlt','MasVnrArea','MiscVal')]
 
-modeloCaret<-train(Cara~.,trControl=trainControl('none'),
+modeloCaret<-train(Intermedia~.,trControl=trainControl('none'),
                    train_numerico,
                    method='glm',family='binomial')
 
