@@ -269,8 +269,13 @@ varImp(modeloCaret)
 ```
 
 
-En el gráfico anterior se observa que solo 3 de las variables tienen buena correlación, sobre todo la variable **YearRemodAdd**, sin embargo, las variables **TotalBsmtSF** y **GrLivArea** tienen una correlación bastabte correcta. Mientras que las varaibles **WoodDeckSF** y **MasVnrArea**, son las peores, sobre todo la ultima varaible. 
+En el gráfico anterior se observa que solo 3 de las variables tienen buena correlación, sobre todo la variable **YearRemodAdd**, sin embargo, las variables **TotalBsmtSF** y **GrLivArea** tienen una correlación bastabte correcta. Mientras que las variables **WoodDeckSF** y **MasVnrArea**, son las peores, sobre todo la ultima varaible. 
 
 
 
 #### 9. ¿Hay alguna forma de mejorar los modelos usando parámetros?¿ Serviría usar regularización en el caso de los modelos creados? 
+
+
+Como se puede observar, el modelo que mejor tuvo rendimiento fue el primero, desde que tiene una buena correlacion en sus variables hasta que tiene un porcentaje de efectividad mucho mayor.
+
+Posiblemente para el caso de los modelos 2 y 3, se puedan llegar a mejorar, esto mediante la seleccion de otras varaibles que tengan una mayor correlacion, por ejemplo que tengan algun tipo de relacion entre ellas, por ejemplo si se puediera llegar a tener variables que manejan solo el tipo de material que se usa, los costos de la casa especificados en diferentes variables, entonces podemos decir que realmente estos modelos pueden mejorarse.
