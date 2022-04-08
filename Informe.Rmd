@@ -1,6 +1,6 @@
 ---
 title: "Informe"
-author: "Marco Ramirez 19588, Alfredo Quezada, Estuardo Hernandez 19202, Alfredo Quezada 191002"
+author: "Marco Ramirez 19588, Estuardo Hernandez 19202, Alfredo Quezada 191002"
 date: "7/4/2022"
 output: html_document
 ---
@@ -137,7 +137,7 @@ Y la mejor variable para predicir el estado de la casa es **SalePrice**
 
 ```{r warning=FALSE}
 
-#Queremos saber si una casa es cara o no
+#Queremos saber si una casa es intermedia o no
 
 modelo<-glm(Intermedia~., data = train[,c('GarageArea','GarageCars','Intermedia','MoSold','GarageYrBlt','MasVnrArea','MiscVal')],family = binomial(), maxit=100)
 modelo
@@ -206,7 +206,7 @@ Finalmente, se muestran las mejores variables para poder predecir el estado de l
 
 ```{r warning=FALSE}
 
-#Queremos saber si una casa es cara o no
+#Queremos saber si una casa es economica o no
 
 modelo<-glm(Economica~., data = train[,c('TotalBsmtSF','MasVnrArea','Economica','YearRemodAdd','GrLivArea','WoodDeckSF')],family = binomial(), maxit=100)
 modelo
