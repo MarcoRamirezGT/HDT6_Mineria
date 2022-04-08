@@ -1,6 +1,6 @@
 ---
 title: "Informe"
-author: "Marco Ramirez 19588, Alfredo Quezada, Estuardo Hernandez 19202"
+author: "Marco Ramirez 19588, Alfredo Quezada, Estuardo Hernandez 19202, Alfredo Quezada 191002"
 date: "7/4/2022"
 output: html_document
 ---
@@ -133,7 +133,7 @@ Y como se observa anteriormente, se muestran las mejores variables para poder pr
 Y la mejor variable para predicir el estado de la casa es **SalePrice**
 
 
-#### 4.Segundo modelo
+#### 7.Segundo modelo
 
 ```{r warning=FALSE}
 
@@ -200,3 +200,77 @@ varImp(modeloIntet)
 
 ```
 Finalmente, se muestran las mejores variables para poder predecir el estado de las casas, evidenciando que **GarageArea** no es una variable útil para el modelo y esto se afirma con su correlación mostrada anteriormente, siendo mala correlación. Respecto a la variable **GarageCars** sí es útil, influyendo en la predicción del modelo, y se observa que esta variable si tiene buena correlación. E indiscutiblemente, la mejor variable de este modelo para predicir el estado de la casa es **GarageYrBlt**.
+
+
+#### 7.Tercer modelo
+
+```{r warning=FALSE}
+
+#Queremos saber si una casa es cara o no
+
+modelo<-glm(Economica~., data = train[,c('TotalBsmtSF','MasVnrArea','Economica','YearRemodAdd','GrLivArea','WoodDeckSF')],family = binomial(), maxit=100)
+modelo
+
+```
+Con este modelo se busca determinar si una casa es Economica o no, utilizando las variables **'TotalBsmtSF','MasVnrArea','Economica','YearRemodAdd','GrLivArea','WoodDeckSF'**.
+
+```{r message=FALSE, warning=FALSE}
+
+#Correlacion de las variables
+
+ggpairs(datos[,c('TotalBsmtSF','MasVnrArea','YearRemodAdd','GrLivArea','WoodDeckSF')])
+
+```
+
+
+En el gráfico anterior se observa que la mayoria de las variables no tienen buena correlación, sobre todo la variable **WoodDeckSF**, sin embargo, las variables **MasVnrArea** y **GrLivArea** tienen una correlación medianamente correcta o por lo menos usable. Entonces se puede concluir que esta combinación de variables no es la más adecuada para el modelo, pero se quiso llegar a determinar una relacion entre areas, año de remodelacion y espacio de madera. 
+
+```{r}
+
+
+##Modelo con todas las variables
+pred<-predict(modelo,newdata = test[,c('TotalBsmtSF','MasVnrArea','YearRemodAdd','GrLivArea','WoodDeckSF')], type = "response")
+prediccion<-ifelse(pred>=0.5,1,0)
+confusionMatrix(as.factor(test$Economica),as.factor(prediccion))
+
+```
+
+
+Este modelo tuvo una precision de **87.24%**, o bien de **0.8724** tal y como se observa en la matriz de confusión mostrada anteriormente, indicando que fue una prediccion medianamente buena. A continuación se observará si tiene overfitting o no. 
+
+```{r}
+
+#Modelo para verificar overfitting
+
+trainPredict<-predict(modelo,newdata = train[,c('TotalBsmtSF','MasVnrArea','YearRemodAdd','GrLivArea','WoodDeckSF')], type = "response")
+trainPred<- ifelse(trainPredict>0.5,1,0)
+confusionMatrix(as.factor(train$Economica),as.factor(trainPred))
+
+```
+Modelo para comparar con la predicción.
+```{r}
+#Calculo de rmse para ver si tenemos overfitting, mientras mas cercano a 0 mayor overffiting.
+
+rmse(test$Economica,prediccion)
+
+
+
+```
+Se observa que se obtuvo un RMSE alejado de 0, siendo **0.3571591**, indicando que este modelo no tiene overfitting.
+
+```{r warning=FALSE}
+train_numerico<-train[,c('TotalBsmtSF','MasVnrArea', 'Economica','YearRemodAdd','GrLivArea','WoodDeckSF')]
+
+modeloCaret<-train(Economica~.,trControl=trainControl('none'),
+                   train_numerico,
+                   method='glm',family='binomial')
+
+varImp(modeloCaret)
+```
+
+
+En el gráfico anterior se observa que solo 3 de las variables tienen buena correlación, sobre todo la variable **YearRemodAdd**, sin embargo, las variables **TotalBsmtSF** y **GrLivArea** tienen una correlación bastabte correcta. Mientras que las varaibles **WoodDeckSF** y **MasVnrArea**, son las peores, sobre todo la ultima varaible. 
+
+
+
+#### 9. ¿Hay alguna forma de mejorar los modelos usando parámetros?¿ Serviría usar regularización en el caso de los modelos creados? 
